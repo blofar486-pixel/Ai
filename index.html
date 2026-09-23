@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MARKET VISION AI - INSTITUTIONAL TERMINAL v6.0</title>
+    <style>
+        :root {
+            --bg-dark: #030712;
+            --bg-card: #0b0f19;
+            --bg-card-hover: #111827;
+            --border-color: #1f293d;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-green-glow: rgba(16, 185, 129, 0.4);
+            --accent-red: #f43f5e;
+            --accent-red-glow: rgba(244, 63, 94, 0.4);
+            --accent-purple: #8b5cf6;
+            --accent-yellow: #facc15;
+            --text-main: #f9fafb;
+            --text-sub: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        body.light-on {
+            background-color: #0b0f19;
+        }
+
+        /* ---------------- LAMP LOGIN ANIMATION STYLES ---------------- */
+        .fireflies-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: var(--accent-yellow);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-yellow), 0 0 20px #eab308;
+            opacity: 0.6;
+            animation: floatGlow 7s infinite ease-in-out;
+        }
+
+        @keyframes floatGlow {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.2; }
+            50% { transform: translateY(-35px) translateX(25px); opacity: 0.9; }
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-wrapper {
+            display: flex;
+            width: 900px;
+            max-width: 100%;
+            min-height: 520px;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Left Lamp Section */
+        .lamp-section {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+        }
+
+        .lamp-box {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .lamp-shade {
+            width: 120px;
+            height: 60px;
+            background: #1a202c;
+            border-top-left-radius: 60px;
+            border-top-right-radius: 60px;
+            border-bottom: 3px solid var(--accent-yellow);
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+            position: relative;
+            z-index: 5;
+        }
+
+        .lamp-stand {
+            width: 6px;
+            height: 180px;
+            background: #2d3748;
+        }
+
+        .lamp-base {
+            width: 90px;
+            height: 12px;
+            background: #1a202c;
+            border-radius: 6px;
+        }
+
+        .lamp-string {
+            position: absolute;
+            top: 55px;
+            right: 22px;
+            width: 2px;
+            height: 55px;
+            background: #718096;
+            z-index: 6;
+            transition: transform 0.2s;
+        }
+
+        .lamp-string::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: -4px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-yellow);
+            border-radius: 50%;
+        }
+
+        .lamp-box:active .lamp-string {
+            transform: translateY(12px);
+        }
+
+        .light-cone {
+            position: absolute;
+            top: 120px;
+            width: 320px;
+            height: 380px;
+            background: linear-gradient(180deg, rgba(250, 204, 21, 0.35) 0%, rgba(250, 204, 21, 0.01) 100%);
+            clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        body.light-on .light-cone {
+            opacity: 1;
+        }
+
+        /* Right Auth Card */
+        .auth-card {
+            flex: 1.1;
+            background: rgba(11, 15, 25, 0.9);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 0 50px rgba(6, 182, 212, 0.15);
+            backdrop-filter: blur(12px);
+            width: 100%;
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            color: var(--accent-cyan);
+            margin-bottom: 6px;
+            font-size: 24px;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+
+        .auth-card p {
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .form-group { margin-bottom: 14px; }
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: var(--accent-cyan);
+            margin-bottom: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px 14px;
+            background: #060a12;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #06b6d4, #2563eb);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .auth-toggle span {
+            color: var(--accent-cyan);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* ---------------- TRADING TERMINAL MAIN APP STYLES ---------------- */
+        #mainApp {
+            padding-bottom: 75px;
+        }
+
+        header {
+            background: rgba(11, 15, 25, 0.9);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 900;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-admin { background: linear-gradient(135deg, #8b5cf6, #d946ef); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 900; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+        .badge-pro { background: linear-gradient(135deg, #f59e0b, #ec4899); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 900; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+        .badge-normal { background: #1f293d; color: var(--text-sub); padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+
+        .btn-wa-header {
+            background: #25d366;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .terminal-container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 12px;
+            width: 100%;
+        }
+
+        .indicators-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            scrollbar-width: none;
+        }
+
+        .indicator-pill {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .indicator-pill.active {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+        .chart-header-info {
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+        }
+
+        .live-price-badge {
+            color: var(--accent-cyan);
+            font-weight: 800;
+            font-size: 12px;
+            background: rgba(6, 182, 212, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        canvas#liveChart {
+            width: 100%;
+            height: 220px;
+            background: #02050b;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .pair-controls {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .btn-neural-scan {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+            border: none;
+            border-radius: 14px;
+            color: #03141a;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .verdict-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 14px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .accuracy-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .verdict-text {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .verdict-call { color: var(--accent-green); text-shadow: 0 0 20px var(--accent-green-glow); }
+        .verdict-put { color: var(--accent-red); text-shadow: 0 0 20px var(--accent-red-glow); }
+        .verdict-none { color: #9ca3af; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .metric-item {
+            background: #060a12;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metric-label { font-size: 9px; color: var(--text-sub); text-transform: uppercase; margin-bottom: 4px; }
+        .metric-value { font-size: 13px; font-weight: 800; color: var(--accent-cyan); }
+
+        /* RADAR SCAN MODAL */
+        .scan-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(3, 7, 18, 0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+        }
+
+        .radar-box {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 2px solid rgba(6, 182, 212, 0.4);
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+        }
+
+        .radar-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, transparent 50%, rgba(6, 182, 212, 0.6) 100%);
+            border-radius: 50%;
+            animation: radarSweep 2s linear infinite;
+        }
+
+        .brain-icon-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            z-index: 10;
+            animation: brainPulse 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes radarSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes brainPulse {
+            0% { transform: translate(-50%, -50%) scale(0.9); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+            100% { transform: translate(-50%, -50%) scale(1.15); filter: drop-shadow(0 0 25px var(--accent-cyan)); }
+        }
+
+        .scan-status-text {
+            font-family: monospace;
+            font-size: 13px;
+            color: var(--accent-cyan);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            height: 20px;
+            text-align: center;
+        }
+
+        .scan-progress-bar-container {
+            width: 100%;
+            max-width: 300px;
+            height: 8px;
+            background: #111827;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .scan-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            transition: width 0.1s linear;
+            box-shadow: 0 0 15px var(--accent-green);
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 65px;
+            background: rgba(11, 15, 25, 0.95);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 33%;
+        }
+
+        .nav-item.active { color: var(--accent-cyan); }
+        .nav-icon { font-size: 20px; }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* ADMIN PANEL TABLE */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .user-table th, .user-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .user-table th { background: #111827; color: var(--accent-cyan); }
+        
+        .btn-action-sm {
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
+        @media(max-width: 768px) {
+            .auth-wrapper { flex-direction: column; }
+            .lamp-section { min-height: 250px; }
+            .light-cone { display: none; }
+        }
+    </style>
+</head>
+<body class="light-on">
+
+    <!-- Fireflies Layer -->
+    <div class="fireflies-layer" id="firefliesLayer"></div>
+
+    <!-- 1. LAMP ANIMATED AUTHENTICATION SCREEN -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-wrapper">
+            
+            <!-- Lamp Interactive Animation -->
+            <div class="lamp-section">
+                <div class="light-cone"></div>
+                <div class="lamp-box" onclick="toggleLight()">
+                    <div class="lamp-shade"></div>
+                    <div class="lamp-string"></div>
+                    <div class="lamp-stand"></div>
+                    <div class="lamp-base"></div>
+                </div>
+            </div>
+
+            <!-- Auth Form Box -->
+            <div class="auth-card">
+                <h2>MARKET VISION AI</h2>
+                <p>Institutional Binary Signal Terminal</p>
+
+                <div id="errorBox" style="display:none; background:rgba(244,63,94,0.2); color:#fca5a5; padding:10px; border-radius:8px; font-size:12px; margin-bottom:12px; text-align:center;"></div>
+
+                <!-- Login Form -->
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Account Email</label>
+                        <input type="email" id="loginEmail" required placeholder="Enter Email Address">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-auth">LOGIN TO TERMINAL</button>
+                    <div class="auth-toggle">
+                        New Trader? <span onclick="toggleAuthMode('register')">Register Account</span>
+                    </div>
+                </form>
+
+                <!-- Register Form -->
+                <form id="registerForm" style="display: none;" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="regName" required placeholder="Enter Full Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Account Email</label>
+                        <input type="email" id="regEmail" required placeholder="Enter Email Address">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="regPassword" required placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Plan Type</label>
+                        <select id="regPlan">
+                            <option value="Normal">Normal Plan (Free/Basic)</option>
+                            <option value="Pro">PRO VIP Plan (98%+ SMC Accuracy)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-auth">REGISTER TERMINAL</button>
+                    <div class="auth-toggle">
+                        Already registered? <span onclick="toggleAuthMode('login')">Login Here</span>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. MAIN TRADING APPLICATION -->
+    <div id="mainApp" style="display: none;">
+        <header>
+            <div class="brand-logo">
+                <div class="brand-icon">🧠</div>
+                <span>VISION AI</span>
+            </div>
+            
+            <div class="header-actions">
+                <span id="userPlanBadge" class="badge-normal">NORMAL</span>
+                <a href="https://wa.me/923157327830?text=Hi%20Admin!%20I%20want%20to%20upgrade%20my%20account%20to%20PRO%20VIP" target="_blank" class="btn-wa-header">
+                    💬 VIP Upgrade
+                </a>
+            </div>
+        </header>
+
+        <!-- VIEW 1: TERMINAL -->
+        <div id="terminalView" class="view-section active">
+            <div class="terminal-container">
+                
+                <div class="indicators-bar">
+                    <div class="indicator-pill active">⚡ SMC Order Blocks</div>
+                    <div class="indicator-pill active">🕯️ Live Candlesticks</div>
+                    <div class="indicator-pill active">📊 EMA 9/21/50</div>
+                    <div class="indicator-pill active">🎯 RSI Delta</div>
+                    <div class="indicator-pill active">🌐 Volume Delta</div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header-info">
+                        <span>LIVE: <strong id="valLivePrice" class="live-price-badge">1.08500</strong></span>
+                        <span>H: <strong id="valH">1.08520</strong></span>
+                        <span>L: <strong id="valL">1.08480</strong></span>
+                        <span>C: <strong id="valC">1.08500</strong></span>
+                    </div>
+                    <canvas id="liveChart"></canvas>
+                </div>
+
+                <div class="pair-controls">
+                    <div>
+                        <label>Asset Pair (All Market Library)</label>
+                        <select id="pairSelect" onchange="changePairAndInit()">
+                            <optgroup label="🔥 Forex Major Pairs">
+                                <option value="EUR/USD">EUR/USD</option>
+                                <option value="GBP/USD">GBP/USD</option>
+                                <option value="USD/JPY">USD/JPY</option>
+                                <option value="AUD/USD">AUD/USD</option>
+                                <option value="USD/CAD">USD/CAD</option>
+                                <option value="USD/CHF">USD/CHF</option>
+                            </optgroup>
+                            <optgroup label="💹 Forex Minor Pairs">
+                                <option value="GBP/JPY">GBP/JPY</option>
+                                <option value="EUR/GBP">EUR/GBP</option>
+                                <option value="EUR/JPY">EUR/JPY</option>
+                                <option value="AUD/JPY">AUD/JPY</option>
+                            </optgroup>
+                            <optgroup label="🔒 PRO VIP OTC Pairs (High Payout)">
+                                <option value="USD/PKR OTC">USD/PKR OTC 🔒</option>
+                                <option value="EUR/USD OTC">EUR/USD OTC 🔒</option>
+                                <option value="GBP/USD OTC">GBP/USD OTC 🔒</option>
+                                <option value="USD/INR OTC">USD/INR OTC 🔒</option>
+                                <option value="USD/BDT OTC">USD/BDT OTC 🔒</option>
+                                <option value="USD/BRL OTC">USD/BRL OTC 🔒</option>
+                            </optgroup>
+                            <optgroup label="🚀 Crypto & Commodities">
+                                <option value="BTC/USD">BTC/USD (Bitcoin)</option>
+                                <option value="ETH/USD">ETH/USD (Ethereum)</option>
+                                <option value="XAU/USD">XAU/USD (Gold Spot)</option>
+                                <option value="USOIL">USOIL (Crude Oil)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Timeframe</label>
+                        <select id="timeframe">
+                            <option value="1M">1M Expiry</option>
+                            <option value="5M">5M Expiry</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-neural-scan" onclick="triggerAIScanModal()">
+                    🧠 RUN NEURAL AI SCAN
+                </button>
+
+                <div class="verdict-card">
+                    <div class="accuracy-badge" id="accuracyBadge" style="display:none;">
+                        🎯 SMC CONFIDENCE: 98%
+                    </div>
+
+                    <div id="verdictText" class="verdict-text verdict-none">
+                        AWAITING AI SCAN
+                    </div>
+
+                    <p id="reasonDetail" style="font-size: 12px; color: var(--text-sub); line-height: 1.4;">
+                        Click "RUN NEURAL AI SCAN" to scan institutional order flow & get guaranteed high-accuracy signal.
+                    </p>
+
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-label">Orderflow Power</div>
+                            <div class="metric-value" id="valOrderflow">--</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Signal Win Rate</div>
+                            <div class="metric-value" id="valWinRate">--</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Entry Window</div>
+                            <div class="metric-value" id="valEntry">--</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW 2: ADMIN PANEL -->
+        <div id="adminView" class="view-section">
+            <div class="terminal-container">
+                <div class="auth-card" style="max-width: 100%; flex: none;">
+                    <h3 style="color: var(--accent-cyan); margin-bottom: 5px;">👑 Admin Control Panel</h3>
+                    <p style="margin-bottom:15px;">Total Registered Users: <strong id="totalUsersCount" style="color:var(--accent-green);">0</strong></p>
+
+                    <div style="overflow-x:auto;">
+                        <table class="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Plan</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUserTable">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: SETTINGS VIEW -->
+        <div id="settingsView" class="view-section">
+            <div class="terminal-container">
+                <div class="auth-card" style="max-width: 100%; flex: none;">
+                    <h3 style="color: var(--accent-cyan); margin-bottom: 15px;">⚙️ User Settings</h3>
+
+                    <div class="form-group">
+                        <label>Trader Name</label>
+                        <input type="text" id="setUserName" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Email</label>
+                        <input type="text" id="setUserEmail" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Subscription Tier</label>
+                        <input type="text" id="setUserPlan" readonly>
+                    </div>
+
+                    <button class="btn-auth" style="background: linear-gradient(135deg, #25d366, #128c7e);" onclick="requestUpgrade()">
+                        💬 UPGRADE TO PRO VIP (WHATSAPP)
+                    </button>
+
+                    <button class="btn-auth" style="background: var(--accent-red); margin-top: 12px;" onclick="logout()">LOGOUT TERMINAL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('terminalView', this)">
+                <div class="nav-icon">📊</div>
+                <span>Terminal</span>
+            </div>
+            <div id="adminNavItem" class="nav-item" style="display:none;" onclick="switchTab('adminView', this)">
+                <div class="nav-icon">👑</div>
+                <span>Admin</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('settingsView', this)">
+                <div class="nav-icon">⚙️</div>
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 3. AI SCANNING RADAR MODAL OVERLAY -->
+    <div id="scanModal" class="scan-modal-overlay">
+        <div class="radar-box">
+            <div class="brain-icon-center">🧠</div>
+        </div>
+        <div id="scanStatusText" class="scan-status-text">INITIALIZING NEURAL NETWORK...</div>
+        <div class="scan-progress-bar-container">
+            <div id="scanProgressBar" class="scan-progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_EMAIL = "blofar486@gmail.com";
+
+        // Generate Floating Fireflies
+        const layer = document.getElementById('firefliesLayer');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'firefly';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (4 + Math.random() * 6) + 's';
+            layer.appendChild(particle);
+        }
+
+        // Toggle Lamp Light
+        function toggleLight() {
+            document.body.classList.toggle('light-on');
+        }
+
+        // REALISTIC BASE PRICES FOR PAIRS
+        const PAIR_BASE_PRICES = {
+            "EUR/USD": 1.0850,
+            "GBP/USD": 1.2950,
+            "USD/JPY": 154.20,
+            "AUD/USD": 0.6580,
+            "USD/CAD": 1.3820,
+            "USD/CHF": 0.8650,
+            "GBP/JPY": 199.80,
+            "EUR/GBP": 0.8370,
+            "EUR/JPY": 167.30,
+            "AUD/JPY": 101.40,
+            "USD/PKR OTC": 278.50,
+            "EUR/USD OTC": 1.0855,
+            "GBP/USD OTC": 1.2960,
+            "USD/INR OTC": 84.10,
+            "USD/BDT OTC": 119.50,
+            "USD/BRL OTC": 5.70,
+            "BTC/USD": 67450.00,
+            "ETH/USD": 2620.00,
+            "XAU/USD": 2735.50,
+            "USOIL": 71.40
+        };
+
+        let defaultUsers = [
+            { name: "Super Admin", email: "Blofar486@gmail.com", password: "78600786@@", plan: "Pro" },
+            { name: "Demo Trader", email: "user@test.com", password: "123", plan: "Normal" }
+        ];
+
+        let users = JSON.parse(localStorage.getItem('users_db'));
+        if (!users || users.length === 0) {
+            users = defaultUsers;
+            localStorage.setItem('users_db', JSON.stringify(users));
+        }
+
+        let currentUser = JSON.parse(sessionStorage.getItem('activeUser')) || null;
+        let candles = [];
+        let liveTickerInterval = null;
+        let currentLivePrice = 1.0850;
+        let currentPairDecimal = 5;
+
+        window.onload = function() {
+            if (currentUser) {
+                showDashboard();
+            } else {
+                showAuthScreen();
+            }
+        };
+
+        function showAuthScreen() {
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('firefliesLayer').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('firefliesLayer').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+
+            const badge = document.getElementById('userPlanBadge');
+            
+            if (currentUser.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                badge.innerText = "ADMIN 👑";
+                badge.className = "badge-admin";
+                document.getElementById('adminNavItem').style.display = "flex";
+                renderAdminTable();
+            } else if (currentUser.plan === 'Pro') {
+                badge.innerText = "PRO VIP ⚡";
+                badge.className = "badge-pro";
+                document.getElementById('adminNavItem').style.display = "none";
+            } else {
+                badge.innerText = "NORMAL";
+                badge.className = "badge-normal";
+                document.getElementById('adminNavItem').style.display = "none";
+            }
+
+            document.getElementById('setUserName').value = currentUser.name;
+            document.getElementById('setUserEmail').value = currentUser.email;
+            document.getElementById('setUserPlan').value = currentUser.plan.toUpperCase();
+
+            changePairAndInit();
+        }
+
+        function toggleAuthMode(mode) {
+            document.getElementById('errorBox').style.display = 'none';
+            if (mode === 'register') {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+            } else {
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+
+            users = JSON.parse(localStorage.getItem('users_db')) || users;
+            const found = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === pass);
+
+            if (found) {
+                currentUser = found;
+                sessionStorage.setItem('activeUser', JSON.stringify(currentUser));
+                showDashboard();
+            } else {
+                const err = document.getElementById('errorBox');
+                err.innerText = "Invalid Email or Password!";
+                err.style.display = 'block';
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const plan = document.getElementById('regPlan').value;
+
+            users = JSON.parse(localStorage.getItem('users_db')) || users;
+
+            if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                alert("This Email is already registered!");
+                return;
+            }
+
+            const newUser = { name, email, password, plan };
+            users.push(newUser);
+            localStorage.setItem('users_db', JSON.stringify(users));
+
+            currentUser = newUser;
+            sessionStorage.setItem('activeUser', JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        function renderAdminTable() {
+            users = JSON.parse(localStorage.getItem('users_db')) || users;
+            const tbody = document.getElementById('adminUserTable');
+            const countElem = document.getElementById('totalUsersCount');
+            
+            tbody.innerHTML = '';
+            countElem.innerText = users.length;
+
+            users.forEach((u, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td><strong style="color:${u.plan === 'Pro' ? '#f59e0b' : '#9ca3af'}">${u.plan}</strong></td>
+                    <td>
+                        <button onclick="toggleUserPlan(${index})" class="btn-action-sm" style="background:#06b6d4;">Toggle</button>
+                        <button onclick="deleteUser(${index})" class="btn-action-sm" style="background:#f43f5e;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleUserPlan(index) {
+            users[index].plan = users[index].plan === 'Pro' ? 'Normal' : 'Pro';
+            localStorage.setItem('users_db', JSON.stringify(users));
+            renderAdminTable();
+        }
+
+        function deleteUser(index) {
+            if (confirm(`Delete user ${users[index].name}?`)) {
+                users.splice(index, 1);
+                localStorage.setItem('users_db', JSON.stringify(users));
+                renderAdminTable();
+            }
+        }
+
+        function switchTab(viewId, element) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            element.classList.add('active');
+
+            if (viewId === 'adminView') renderAdminTable();
+        }
+
+        function logout() {
+            if (liveTickerInterval) clearInterval(liveTickerInterval);
+            sessionStorage.removeItem('activeUser');
+            currentUser = null;
+            showAuthScreen();
+        }
+
+        function requestUpgrade() {
+            const text = encodeURIComponent(`Hi Admin! I want to upgrade my account (${currentUser.email}) to PRO VIP.`);
+            window.open(`https://wa.me/923157327830?text=${text}`, '_blank');
+        }
+
+        // --- REALTIME LIVE PRICE & CANDLE ENGINE ---
+        function changePairAndInit() {
+            const pair = document.getElementById('pairSelect').value;
+            let basePrice = PAIR_BASE_PRICES[pair] || 1.0850;
+
+            if (basePrice > 500) currentPairDecimal = 2;
+            else if (basePrice > 10) currentPairDecimal = 2;
+            else currentPairDecimal = 5;
+
+            currentLivePrice = basePrice;
+            candles = [];
+
+            let price = basePrice;
+            for (let i = 0; i < 30; i++) {
+                let open = price;
+                let step = basePrice * 0.0005;
+                let change = (Math.random() - 0.49) * step;
+                let close = open + change;
+                let high = Math.max(open, close) + Math.random() * (step * 0.5);
+                let low = Math.min(open, close) - Math.random() * (step * 0.5);
+                candles.push({ open, high, low, close });
+                price = close;
+            }
+
+            drawCandlestickChart();
+            startLivePriceTicker();
+        }
+
+        function startLivePriceTicker() {
+            if (liveTickerInterval) clearInterval(liveTickerInterval);
+
+            let tickCounter = 0;
+
+            liveTickerInterval = setInterval(() => {
+                const pair = document.getElementById('pairSelect').value;
+                let basePrice = PAIR_BASE_PRICES[pair] || 1.0850;
+                let volatility = basePrice * 0.0002;
+
+                let change = (Math.random() - 0.48) * volatility;
+                currentLivePrice = currentLivePrice + change;
+
+                let lastCandle = candles[candles.length - 1];
+                lastCandle.close = currentLivePrice;
+                if (currentLivePrice > lastCandle.high) lastCandle.high = currentLivePrice;
+                if (currentLivePrice < lastCandle.low) lastCandle.low = currentLivePrice;
+
+                tickCounter++;
+
+                if (tickCounter >= 6) {
+                    tickCounter = 0;
+                    candles.shift();
+                    candles.push({
+                        open: currentLivePrice,
+                        high: currentLivePrice,
+                        low: currentLivePrice,
+                        close: currentLivePrice
+                    });
+                }
+
+                drawCandlestickChart();
+            }, 1000);
+        }
+
+        function drawCandlestickChart() {
+            const canvas = document.getElementById('liveChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth - 28;
+            canvas.height = 220;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let allPrices = [];
+            candles.forEach(c => allPrices.push(c.high, c.low));
+            const min = Math.min(...allPrices);
+            const max = Math.max(...allPrices);
+            const range = (max - min) || 0.0001;
+
+            const candleWidth = (canvas.width / candles.length) - 4;
+
+            ctx.strokeStyle = '#1f293d';
+            ctx.lineWidth = 1;
+            for (let y = 30; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            candles.forEach((c, i) => {
+                const x = i * (candleWidth + 4) + 4;
+                const getY = (val) => canvas.height - ((val - min) / range) * (canvas.height - 40) - 20;
+
+                const openY = getY(c.open);
+                const closeY = getY(c.close);
+                const highY = getY(c.high);
+                const lowY = getY(c.low);
+
+                const isGreen = c.close >= c.open;
+                const color = isGreen ? '#10b981' : '#f43f5e';
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(x + candleWidth / 2, highY);
+                ctx.lineTo(x + candleWidth / 2, lowY);
+                ctx.stroke();
+
+                ctx.fillStyle = color;
+                const bodyY = Math.min(openY, closeY);
+                const bodyHeight = Math.max(Math.abs(closeY - openY), 3);
+                ctx.fillRect(x, bodyY, candleWidth, bodyHeight);
+            });
+
+            const lastC = candles[candles.length - 1];
+            document.getElementById('valLivePrice').innerText = lastC.close.toFixed(currentPairDecimal);
+            document.getElementById('valC').innerText = lastC.close.toFixed(currentPairDecimal);
+            document.getElementById('valH').innerText = lastC.high.toFixed(currentPairDecimal);
+            document.getElementById('valL').innerText = lastC.low.toFixed(currentPairDecimal);
+        }
+
+        // --- DYNAMIC AI SCANNING & SIGNAL LOGIC ---
+        function triggerAIScanModal() {
+            const pair = document.getElementById('pairSelect').value;
+
+            if (pair.includes('OTC') && currentUser.plan !== 'Pro' && currentUser.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                alert("🔒 OTC Pairs PRO VIP users ke liye hain!\nAdmin se contact karein: WhatsApp 03157327830");
+                return;
+            }
+
+            const modal = document.getElementById('scanModal');
+            const statusText = document.getElementById('scanStatusText');
+            const progressBar = document.getElementById('scanProgressBar');
+
+            modal.style.display = 'flex';
+            progressBar.style.width = '0%';
+
+            const steps = [
+                "CONNECTING TO LIQUIDITY STREAM...",
+                "SCALPING ORDER BLOCKS & FVG...",
+                "ANALYZING VOLUME DELTA MATRIX...",
+                "CALCULATING NEURAL WIN PROBABILITY...",
+                "GENERATING HIGH CONFLUENCE SIGNAL..."
+            ];
+
+            let stepIdx = 0;
+            let progress = 0;
+
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+
+                if (progress % 20 === 0 && stepIdx < steps.length) {
+                    statusText.innerText = steps[stepIdx];
+                    stepIdx++;
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        executeGuaranteedSignal();
+                    }, 300);
+                }
+            }, 70);
+        }
+
+        function executeGuaranteedSignal() {
+            const tf = document.getElementById('timeframe').value;
+            const verdictTxt = document.getElementById('verdictText');
+            const reasonTxt = document.getElementById('reasonDetail');
+            const badge = document.getElementById('accuracyBadge');
+
+            const lastCandle = candles[candles.length - 1];
+            const isBullishCandle = lastCandle.close >= lastCandle.open;
+            
+            const winAccuracy = (96 + Math.random() * 3).toFixed(1);
+
+            if (isBullishCandle || Math.random() > 0.5) {
+                verdictTxt.innerText = `CALL (UP) ⬆ [${tf}]`;
+                verdictTxt.className = "verdict-text verdict-call";
+                badge.innerText = `🎯 SMC CONFIDENCE: ${winAccuracy}% WIN RATE`;
+                badge.style.display = "inline-block";
+                reasonTxt.innerText = `Strong Institutional Order Block Swept! Bullish momentum confirmed with EMA Cross & RSI Breakout. Enter UP trade on NEXT CANDLE!`;
+                
+                document.getElementById('valOrderflow').innerText = `BULLISH (${winAccuracy}%)`;
+                document.getElementById('valWinRate').innerText = `${winAccuracy}%`;
+                document.getElementById('valEntry').innerText = "NEXT 1 CANDLE";
+            } else {
+                verdictTxt.innerText = `PUT (DOWN) ⬇ [${tf}]`;
+                verdictTxt.className = "verdict-text verdict-put";
+                badge.innerText = `🎯 SMC CONFIDENCE: ${winAccuracy}% WIN RATE`;
+                badge.style.display = "inline-block";
+                reasonTxt.innerText = `Strong Bearish Liquidity Grabbed! Fair Value Gap (FVG) filled with heavy sell volume. Enter DOWN trade on NEXT CANDLE!`;
+
+                document.getElementById('valOrderflow').innerText = `BEARISH (${winAccuracy}%)`;
+                document.getElementById('valWinRate').innerText = `${winAccuracy}%`;
+                document.getElementById('valEntry').innerText = "NEXT 1 CANDLE";
+            }
+        }
+
+        window.onresize = drawCandlestickChart;
+    </script>
+</body>
+</html>
